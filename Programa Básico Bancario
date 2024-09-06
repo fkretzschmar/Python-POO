@@ -1,0 +1,93 @@
+lass Account:
+    def __init__(self, account_number, account_holder, balance=0.0):
+        self.account_number = account_number
+        self.account_holder = account_holder
+        self.balance = balance
+
+accounts = []
+account_count = 0
+MAX_ACCOUNTS = 100
+
+def create_account():
+    global account_count
+    if account_count >= MAX_ACCOUNTS:
+        print("Limite de contas atingido.")
+        return
+    
+    account_holder = input("Nome do titular da conta: ")
+    new_account = Account(account_count + 1, account_holder)
+    accounts.append(new_account)
+    account_count += 1
+    print(f"Conta criada com sucesso! Numero da conta: {new_account.account_number}")
+
+def deposit():
+    account_number = int(input("Numero da conta: "))
+    if 1 <= account_number <= account_count:
+        amount = float(input("Valor para deposito: "))
+        accounts[account_number - 1].balance += amount
+        print("Deposito realizado com sucesso!")
+    else:
+        print("Conta nao encontrada.")
+
+def withdraw():
+    account_number = int(input("Numero da conta: "))
+    if 1 <= account_number <= account_count:
+        amount = float(input("Valor para saque: "))
+        if accounts[account_number - 1].balance >= amount:
+            accounts[account_number - 1].balance -= amount
+            print("Saque realizado com sucesso!")
+        else:
+            print("Saldo insuficiente.")
+    else:
+        print("Conta nao encontrada.")
+
+def check_balance():
+    account_number = int(input("Numero da conta: "))
+    if 1 <= account_number <= account_count:
+        print(f"Saldo da conta {account_number}: {accounts[account_number - 1].balance:.2f}")
+    else:
+        print("Conta nao encontrada.")
+
+def transfer():
+    from_account = int(input("Numero da conta de origem: "))
+    to_account = int(input("Numero da conta de destino: "))
+    if 1 <= from_account <= account_count and 1 <= to_account <= account_count:
+        amount = float(input("Valor para transferencia: "))
+        if accounts[from_account - 1].balance >= amount:
+            accounts[from_account - 1].balance -= amount
+            accounts[to_account - 1].balance += amount
+            print("Transferencia realizada com sucesso!")
+        else:
+            print("Saldo insuficiente na conta de origem.")
+    else:
+        print("Uma das contas nao foi encontrada.")
+
+def main():
+    while True:
+        print("\n--- Sistema Bancario ---")
+        print("1. Criar Conta")
+        print("2. Depositar")
+        print("3. Sacar")
+        print("4. Consultar Saldo")
+        print("5. Transferir")
+        print("6. Sair")
+        choice = int(input("Escolha uma opcao: "))
+        
+        if choice == 1:
+            create_account()
+        elif choice == 2:
+            deposit()
+        elif choice == 3:
+            withdraw()
+        elif choice == 4:
+            check_balance()
+        elif choice == 5:
+            transfer()
+        elif choice == 6:
+            print("Saindo...")
+            break
+        else:
+            print("Opcao invalida. Tente novamente.")
+
+if __name__ == "__main__":
+    main()
