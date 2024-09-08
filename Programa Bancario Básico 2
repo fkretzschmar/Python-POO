@@ -5,13 +5,14 @@ import pytz
 SP_TZ = pytz.timezone('America/Sao_Paulo')
 
 class Account:
-    def __init__(self, account_number, account_holder, balance=0.0):
+    def __init__(self, account_number, account_holder, balance=0.0, agency="0001"):
         self.account_number = account_number
         self.account_holder = account_holder
         self.balance = balance
         self.withdrawals_today = 0
         self.transfers_today = 0
         self.last_transaction_date = None
+        self.agency = agency  # Padrão para agência: 0001
 
     def reset_transactions(self):
         today = datetime.now(SP_TZ).date()
@@ -38,11 +39,21 @@ class Account:
         self.withdrawals_today += 1
         self.last_transaction_date = datetime.now(SP_TZ).date()
         print(f"Saque registrado em {datetime.now(SP_TZ)}")
+        self.display_account_details()
 
     def register_transfer(self):
         self.transfers_today += 1
         self.last_transaction_date = datetime.now(SP_TZ).date()
         print(f"Transferência registrada em {datetime.now(SP_TZ)}")
+        self.display_account_details()
+
+    def display_account_details(self):
+        print("===============================================")
+        print(f"Agência: {self.agency}")
+        print(f"Número: {self.account_number}")
+        print(f"Titular: {self.account_holder}")
+        print(f"Saldo: R$ {self.balance:.2f}")
+        print("===============================================")
 
 accounts = []
 account_count = 0
@@ -59,6 +70,7 @@ def create_account():
     accounts.append(new_account)
     account_count += 1
     print(f"Conta criada com sucesso! Numero da conta: {new_account.account_number} em {datetime.now(SP_TZ)}")
+    new_account.display_account_details()
 
 def deposit():
     account_number = int(input("Numero da conta: "))
@@ -79,7 +91,6 @@ def withdraw():
             if account.balance >= amount:
                 account.balance -= amount
                 account.register_withdrawal()
-                print("Saque realizado com sucesso!")
             else:
                 print("Saldo insuficiente.")
     else:
@@ -89,7 +100,7 @@ def check_balance():
     account_number = int(input("Numero da conta: "))
     if 1 <= account_number <= account_count:
         account = accounts[account_number - 1]
-        print(f"Saldo da conta {account_number}: {account.balance:.2f}")
+        print(f"Saldo da conta {account_number}: R$ {account.balance:.2f}")
         print(f"Consulta realizada em {datetime.now(SP_TZ)}")
     else:
         print("Conta nao encontrada.")
@@ -106,7 +117,6 @@ def transfer():
                 account_from.balance -= amount
                 account_to.balance += amount
                 account_from.register_transfer()
-                print("Transferencia realizada com sucesso!")
             else:
                 print("Saldo insuficiente na conta de origem.")
     else:
